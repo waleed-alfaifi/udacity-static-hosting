@@ -2,11 +2,26 @@
 version: 2.1
 
 jobs:
-  sample_job:
+  build:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:16.3.0
     steps:
-      - run: echo Sample
+      - run: npm install
+      - run: npm run build
+      # save dist folder to cache
+      - save_cache:
+          key: dist-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - dist
+  store_to_artifact:
+    docker:
+      - image: cimg/node:16.3.0
+    steps:
+      # restore node_modules from cache
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - store_artifacts:
+          path: dist
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
@@ -15,4 +30,5 @@ workflows:
   sample_workflow:
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - sample_job
+      - build
+      - store_to_artifact
