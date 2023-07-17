@@ -4,7 +4,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/node:16.3.0
+      - image: cimg/node:16.10.0
     steps:
       - checkout
       - run: npm install
@@ -16,7 +16,7 @@ jobs:
             - dist
   store_to_artifact:
     docker:
-      - image: cimg/node:16.3.0
+      - image: cimg/node:16.10.0
     steps:
       - checkout
       # restore node_modules from cache
